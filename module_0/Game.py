@@ -33,7 +33,3 @@ def score_game(game_core):
     return(score)
 
 score_game(game_core)
-
-
-
-
