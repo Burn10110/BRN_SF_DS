@@ -1,10 +1,12 @@
 import numpy as np
+limit = int(input('В каких пределах угадываем? От 1 до ')) #мне стало интересно, как будет меняться число попыток от верхнего предела выборки
+#limit = 100 #если нужно именно 100 в решении
 def game_core():
-    predict = np.random.randint(1,101) #загадываем число
-    compare = 100 #ищущее число, изначально равно нашему диапазону
-    interval = 100 #вспомогательное число стремящееся к нулю делением на 2, изначально равно ищущему
+    predict = np.random.randint(1,limit+1) #загадываем число
+    compare = limit #ищущее число, изначально равно нашему диапазону
+    interval = limit #вспомогательное число стремящееся к нулю делением на 2, изначально равно ищущему
     count = 0 #счётчик попыток
-    for i in range(1,101):
+    for i in range(1, limit+1):
         count += 1 #считаем попытку
         if predict==compare:
             return(count)
@@ -23,7 +25,7 @@ def game_core():
 def score_game(game_core):
     count_ls = [] #создаём пустой список
     np.random.seed(1)  # фиксируем RANDOM SEED, чтобы эксперимент был воспроизводим!
-    random_array = np.random.randint(1,101, size=(1000))
+    random_array = np.random.randint(1, limit+1, size=(1000))
     for number in random_array:
         count_ls.append(game_core()) #добавляем к списку число попыток из game_core
     score = int(np.mean(count_ls)) #берём среднее арифметическое по числу попыток
