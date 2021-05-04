@@ -1,0 +1,58 @@
+with
+    fl as
+        (
+        select
+            f.actual_arrival,
+            f.actual_departure,
+            f.aircraft_code,
+            f.arrival_airport,
+            f.flight_id,
+            f.scheduled_departure,
+            f.flight_no
+        from
+            dst_project.flights f
+        where
+            f.departure_airport = 'AAQ'
+            and (date_trunc('month', f.scheduled_departure) in ('2016-12-01', '2017-01-01','2017-02-01'))
+            and f.status not in ('Cancelled')
+        ),
+    tfl as
+        (
+        select
+            sum(tf.amount) total_amount,
+            tf.flight_id
+        from
+            dst_project.ticket_flights tf
+        group by
+            tf.flight_id
+        ),
+    ac as
+        (
+        select *
+        from
+            dst_project.aircrafts a
+        ),
+    ap as
+        (
+        select
+            p.airport_code,
+            p.city
+        from
+            dst_project.airports p
+        )
+select
+    flight_id,
+    date(scheduled_departure),
+    date_part('hour', actual_arrival - actual_departure) +
+    date_part('minute', actual_arrival - actual_departure) / 60 duration,
+    aircraft_code ac_code,
+    model ac_model,
+    range ac_range,
+    arrival_airport,
+    city,
+    flight_no,
+    total_amount
+from fl
+    left join tfl using (flight_id)
+    left join ap on fl.arrival_airport = ap.airport_code
+    left join ac using (aircraft_code)
